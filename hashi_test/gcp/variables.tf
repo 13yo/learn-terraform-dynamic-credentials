@@ -6,6 +6,6 @@ variable "network_name" {
   default = "acme-hashi-test"
 }
 
-variable "project" {
-  type = "hashitest-427520"
+variable "gcp_project_id" {
+  type = string
 }

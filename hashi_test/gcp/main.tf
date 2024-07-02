@@ -14,14 +14,14 @@ resource "google_compute_network" "hashi-test" {
 resource "google_compute_subnetwork" "default" {
   name                     = var.network_name
   ip_cidr_range            = "10.0.0.0/16"
-  network                  = google_compute_network.default.self_link
+  network                  = google_compute_network.hashi-test.self_link
   region                   = var.region
   private_ip_google_access = true
 }
 
 resource "google_compute_router" "default" {
   name    = "acme-router"
-  network = google_compute_network.default.self_link
+  network = google_compute_network.hashi-test.self_link
   region  = var.region
 }
 
@@ -37,7 +37,7 @@ module "cloud-nat" {
 module "mig_template" {
   source     = "terraform-google-modules/vm/google//modules/instance_template"
   version    = "~> 7.9"
-  network    = google_compute_network.default.self_link
+  network    = google_compute_network.hashi-test.self_link
   subnetwork = google_compute_subnetwork.default.self_link
   service_account = {
     email  = ""
@@ -75,7 +75,7 @@ module "mig" {
     name = "http",
     port = 80
   }]
-  network    = google_compute_network.default.self_link
+  network    = google_compute_network.hashi-test.self_link
   subnetwork = google_compute_subnetwork.default.self_link
 }
 
@@ -85,7 +85,7 @@ module "gce-lb-http" {
   name              = "acme-mig-http-lb"
   project           = var.gcp_project_id
   target_tags       = [var.network_name]
-  firewall_networks = [google_compute_network.default.name]
+  firewall_networks = [google_compute_network.hashi-test.name]
 
 
   backends = {
