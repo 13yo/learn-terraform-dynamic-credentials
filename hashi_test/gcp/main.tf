@@ -1,9 +1,9 @@
 provider "google" {
-  project = var.project
+  project = var.gcp_project_id
 }
 
 provider "google-beta" {
-  project = var.project
+  project = var.gcp_project_id
 }
 
 resource "google_compute_network" "hashi-test" {
@@ -29,7 +29,7 @@ module "cloud-nat" {
   source     = "terraform-google-modules/cloud-nat/google"
   version    = "~> 5.0"
   router     = google_compute_router.default.name
-  project_id = var.project
+  project_id = var.gcp_project_id
   region     = var.region
   name       = "acme-cloud-nat"
 }
@@ -83,7 +83,7 @@ module "gce-lb-http" {
   source            = "terraform-google-modules/lb-http/google"
   version           = "~> 10.0"
   name              = "acme-mig-http-lb"
-  project           = var.project
+  project           = var.gcp_project_id
   target_tags       = [var.network_name]
   firewall_networks = [google_compute_network.default.name]
 
