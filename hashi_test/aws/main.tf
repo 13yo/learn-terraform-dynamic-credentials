@@ -86,7 +86,7 @@ module "alb" {
       health_check = {
         enabled             = true
         interval            = 30
-        path                = "/healthz"
+        path                = "/index.html"
         port                = "traffic-port"
         healthy_threshold   = 3
         unhealthy_threshold = 3
@@ -142,12 +142,30 @@ resource "aws_instance" "this" {
   ami           = data.aws_ssm_parameter.al2.value
   instance_type = var.instance_type
   subnet_id     = element(module.vpc.private_subnets, 0)
+
+  user_data = <<-EOF
+    #!/bin/bash
+    sudo yum update -y
+    sudo yum install httpd -y
+    sudo systemctl enable httpd
+    sudo systemctl start httpd
+    echo "<html><body><div>Hello, this is THIS!</div></body></html>" > /var/www/html/index.html
+    EOF
 }
 
 resource "aws_instance" "other" {
   ami           = data.aws_ssm_parameter.al2.value
   instance_type = var.instance_type
   subnet_id     = element(module.vpc.private_subnets, 0)
+
+  user_data = <<-EOF
+    #!/bin/bash
+    sudo yum update -y
+    sudo yum install httpd -y
+    sudo systemctl enable httpd
+    sudo systemctl start httpd
+    echo "<html><body><div>Hello, this is OTHER!</div></body></html>" > /var/www/html/index.html
+    EOF
 }
 
 module "log_bucket" {
