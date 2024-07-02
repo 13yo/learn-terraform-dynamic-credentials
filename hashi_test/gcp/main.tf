@@ -27,7 +27,7 @@ resource "google_compute_router" "default" {
 
 module "cloud-nat" {
   source     = "terraform-google-modules/cloud-nat/google"
-  version    = "~> 5.0"
+  version    = "~> 5.2.0"
   router     = google_compute_router.default.name
   project_id = var.gcp_project_id
   region     = var.region
@@ -35,8 +35,9 @@ module "cloud-nat" {
 }
 
 module "mig_template" {
-  source     = "terraform-google-modules/vm/google//modules/instance_template"
-  version    = "~> 7.9"
+  source  = "terraform-google-modules/vm/google//modules/instance_template"
+  version = "~> 11.1.0"
+
   network    = google_compute_network.hashi-test.self_link
   subnetwork = google_compute_subnetwork.default.self_link
   service_account = {
@@ -66,7 +67,7 @@ module "mig_template" {
 
 module "mig" {
   source            = "terraform-google-modules/vm/google//modules/mig"
-  version           = "~> 7.9"
+  version           = "~> 11.1.0"
   instance_template = module.mig_template.self_link
   region            = var.region
   hostname          = var.network_name
@@ -75,13 +76,11 @@ module "mig" {
     name = "http",
     port = 80
   }]
-  network    = google_compute_network.hashi-test.self_link
-  subnetwork = google_compute_subnetwork.default.self_link
 }
 
 module "gce-lb-http" {
   source            = "terraform-google-modules/lb-http/google"
-  version           = "~> 10.0"
+  version           = "~> 11.0.0"
   name              = "acme-mig-http-lb"
   project           = var.gcp_project_id
   target_tags       = [var.network_name]
