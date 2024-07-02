@@ -12,8 +12,8 @@ locals {
   azs      = slice(data.aws_availability_zones.available.names, 0, 3)
 
   tags = {
-    Name       = local.name
-    Example    = local.name
+    Name    = local.name
+    Example = local.name
   }
 }
 
@@ -65,8 +65,8 @@ module "alb" {
 
   listeners = {
     http = {
-      port               = 80
-      protocol           = "HTTP"
+      port     = 80
+      protocol = "HTTP"
       forward = {
         target_group_key = "acme-instance"
       }
@@ -132,8 +132,8 @@ module "vpc" {
   private_subnets = [for k, v in local.azs : cidrsubnet(local.vpc_cidr, 4, k)]
   public_subnets  = [for k, v in local.azs : cidrsubnet(local.vpc_cidr, 8, k + 48)]
 
-  enable_nat_gateway = true
-  single_nat_gateway = true
+  enable_nat_gateway     = true
+  single_nat_gateway     = true
   one_nat_gateway_per_az = false
 
   tags = local.tags
