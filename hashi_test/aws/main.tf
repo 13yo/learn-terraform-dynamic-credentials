@@ -134,6 +134,30 @@ module "vpc" {
   tags = local.tags
 }
 
+resource "aws_security_group" "instance" {
+  name        = "acme-instance-sg"
+  description = "SG for the web server instances"
+  vpc_id      = module.vpc.vpc_id
+
+  # Allow outbound internet access.
+  egress {
+    from_port   = 0
+    to_port     = 0
+    protocol    = "-1"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+}
+
+resource "aws_security_group_rule" "opened_to_alb" {
+  type                     = "ingress"
+  from_port                = 80
+  to_port                  = 82
+  protocol                 = "tcp"
+  source_security_group_id = module.alb.security_group_id
+  security_group_id        = aws_security_group.instance.id
+}
+
+
 data "aws_ssm_parameter" "al2" {
   name = "/aws/service/ami-amazon-linux-latest/amzn2-ami-hvm-x86_64-gp2"
 }
@@ -142,6 +166,8 @@ resource "aws_instance" "this" {
   ami           = data.aws_ssm_parameter.al2.value
   instance_type = var.instance_type
   subnet_id     = element(module.vpc.private_subnets, 0)
+
+  security_groups = [aws_security_group.instance.id]
 
   user_data = <<-EOF
     #!/bin/bash
@@ -157,6 +183,8 @@ resource "aws_instance" "other" {
   ami           = data.aws_ssm_parameter.al2.value
   instance_type = var.instance_type
   subnet_id     = element(module.vpc.private_subnets, 0)
+
+  security_groups = [aws_security_group.instance.id]
 
   user_data = <<-EOF
     #!/bin/bash
