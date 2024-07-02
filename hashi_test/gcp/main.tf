@@ -54,8 +54,8 @@ module "mig_template" {
       set -euo pipefail
 
       export DEBIAN_FRONTEND=noninteractive
-      apt-get update
-      apt-get install -y nginx-light jq
+      apt update
+      apt install -y nginx-light jq
 
       NAME=$(curl -H "Metadata-Flavor: Google" "http://metadata.google.internal/computeMetadata/v1/instance/hostname")
       
