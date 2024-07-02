@@ -38,7 +38,9 @@ module "mig_template" {
   source  = "terraform-google-modules/vm/google//modules/instance_template"
   version = "~> 11.1.0"
 
-  source_image_family = "debian-12"
+  source_image_project = "debian-cloud"
+  source_image_family  = "debian-12"
+  source_image         = "debian-12-bookworm-v20240701"
 
   network    = google_compute_network.hashi-test.self_link
   subnetwork = google_compute_subnetwork.default.self_link
