@@ -1,1 +1,0 @@
-gcp_project_id = "hashitest-427520"

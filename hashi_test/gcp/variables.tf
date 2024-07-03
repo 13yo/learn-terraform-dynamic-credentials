@@ -1,9 +1,9 @@
 variable "region" {
-  default = "us-west1"
+  type = string
 }
 
 variable "network_name" {
-  default = "acme-hashi-test"
+  type = string
 }
 
 variable "gcp_project_id" {
